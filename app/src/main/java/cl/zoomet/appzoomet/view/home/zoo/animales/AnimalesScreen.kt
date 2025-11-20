@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -101,7 +102,8 @@ fun AnimalCard(animal: Animal) {
                     contentDescription = "Imagen de ${animal.nombre}",
                     modifier = Modifier.fillMaxWidth()
                         .fillMaxHeight(0.5f)
-                        .align(Alignment.BottomCenter),
+                        .align(Alignment.BottomCenter)
+                        .alpha(0.7f),
                     contentScale = ContentScale.Crop
                 )
                 // Texto de estado de conservación
@@ -109,22 +111,25 @@ fun AnimalCard(animal: Animal) {
                     text = "Estado conservación: ${animal.estadoConservacion}",
                     color = Color.White,
                     fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(24.dp).offset(y = -30.dp)
+
                 )
             }
         }
 
         // Tarjeta de información superior
-        Column(
+        Box(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            contentAlignment = Alignment.Center // Centra el contenido de este Box
         ) {
+            // Tarjeta de información superior
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
+                    .align(Alignment.TopCenter) // Alinea esta tarjeta en la parte superior
                     .padding(top = 32.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF6B5B3B))
@@ -149,7 +154,7 @@ fun AnimalCard(animal: Animal) {
                 }
             }
 
-            // Icono central
+            // Icono central (ahora se centrará gracias al contentAlignment del Box padre)
             Box(
                 modifier = Modifier
                     .size(60.dp)
@@ -163,11 +168,8 @@ fun AnimalCard(animal: Animal) {
                     modifier = Modifier.size(40.dp)
                 )
             }
-
-            // Espaciador para empujar el icono hacia arriba
-            Spacer(modifier = Modifier.height(400.dp))
         }
-    }
+        }
 }
 
 @Preview(showBackground = true)
