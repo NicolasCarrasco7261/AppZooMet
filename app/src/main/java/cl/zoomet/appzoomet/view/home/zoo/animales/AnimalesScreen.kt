@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import cl.zoomet.appzoomet.R
+import cl.zoomet.appzoomet.ui.theme.ZooAnimalGreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -40,7 +41,7 @@ fun AnimalesScreen(
     val pagerState = rememberPagerState(pageCount = { animales.size })
 
     Scaffold(
-        containerColor = Color(0xFFE6EAD6)
+        containerColor = ZooAnimalGreen
     ) { padding ->
         Column(
             modifier = Modifier
@@ -80,15 +81,9 @@ fun AnimalCard(animal: Animal) {
         // Fondo con la imagen del animal
         Card(
             modifier = Modifier.fillMaxSize(),
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(24.dp)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    painter = painterResource(id = animal.imagen),
-                    contentDescription = "Imagen de ${animal.nombre}",
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(0.34f),
-                    contentScale = ContentScale.Crop
-                )
                 // Gradiente oscuro en la parte inferior para que el texto sea legible
                 Box(
                     modifier = Modifier
@@ -96,18 +91,27 @@ fun AnimalCard(animal: Animal) {
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-                                startY = 600f
+                                startY = 500f
                             )
                         )
+                )
+
+                Image(
+                    painter = painterResource(id = animal.imagen),
+                    contentDescription = "Imagen de ${animal.nombre}",
+                    modifier = Modifier.fillMaxWidth()
+                        .fillMaxHeight(0.5f)
+                        .align(Alignment.BottomCenter),
+                    contentScale = ContentScale.Crop
                 )
                 // Texto de estado de conservación
                 Text(
                     text = "Estado conservación: ${animal.estadoConservacion}",
                     color = Color.White,
-                    fontSize = 16.sp,
+                    fontSize = 24.sp,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(24.dp)
+                        .padding(24.dp).offset(y = -30.dp)
                 )
             }
         }
@@ -120,7 +124,7 @@ fun AnimalCard(animal: Animal) {
         ) {
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth(0.75f)
                     .padding(top = 32.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF6B5B3B))
@@ -139,7 +143,7 @@ fun AnimalCard(animal: Animal) {
                     Text(
                         text = animal.descripcion,
                         color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         textAlign = TextAlign.Center
                     )
                 }
