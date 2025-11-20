@@ -36,10 +36,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import cl.zoomet.appzoomet.view.core.navigation.Animales
 import cl.zoomet.appzoomet.view.core.navigation.MapaZoo
-
-// Definición de colores extraídos de la imagen
-val ZooBrown = Color(0xFF7B6032)
-val ZooButtonYellow = Color(0xFFE0C29A)
+import cl.zoomet.appzoomet.ui.theme.ZooBrown
+import cl.zoomet.appzoomet.ui.theme.ZooButtonYellow
 
 @Preview(showBackground = true)
 @Composable
