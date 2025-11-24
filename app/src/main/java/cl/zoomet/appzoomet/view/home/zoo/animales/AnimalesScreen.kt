@@ -2,6 +2,7 @@ package cl.zoomet.appzoomet.view.home.zoo.animales
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,19 +29,27 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import cl.zoomet.appzoomet.R
 import cl.zoomet.appzoomet.ui.theme.ZooAnimalGreen
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import cl.zoomet.appzoomet.data.datastore.PreferencesRepository
+import cl.zoomet.appzoomet.ui.theme.ZooBrown
+import cl.zoomet.appzoomet.ui.theme.ZooButtonBrown
+import cl.zoomet.appzoomet.ui.theme.ZooButtonGreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun AnimalesScreen(
     animalesViewModel: AnimalesViewModel = viewModel(),
     navController: NavController
 ) {
-    // 1. Recolectamos la lista de animales desde el ViewModel
+    // Recolectamos la lista de animales desde el ViewModel
     val animales by animalesViewModel.animales.collectAsState()
 
-    // 2. Usaremos un PagerState para controlar el carrusel
+    // Usaremos un PagerState para controlar el carrusel
     val pagerState = rememberPagerState(pageCount = { animales.size })
+
+    val context = LocalContext.current
+    val preferencesRepository = remember { PreferencesRepository(context) }
+    val animalesVistosSet by preferencesRepository.animalVistoFlow.collectAsState(initial = emptySet())
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = ZooAnimalGreen
@@ -53,7 +63,7 @@ fun AnimalesScreen(
         ) {
             // Si la lista de animales no está vacía, mostramos el carrusel
             if (animales.isNotEmpty()) {
-                // 3. Usamos HorizontalPager para crear el carrusel scrolleable
+                // Usamos HorizontalPager para crear el carrusel scrolleable
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxSize(),
@@ -61,7 +71,23 @@ fun AnimalesScreen(
                 ) { page ->
                     // El índice 'page' nos dice qué animal mostrar
                     val animal = animales[page]
-                    AnimalCard(animal = animal)
+
+                    val esVisto = animal.nombre in animalesVistosSet
+                    AnimalCard(
+                        animal = animal,
+                        isActivado = esVisto,
+                        onIconoClick = {
+                            scope.launch {
+                                val nuevoAnimalesVisto = animalesVistosSet.toMutableSet()
+                                if (esVisto) {
+                                    nuevoAnimalesVisto.remove(animal.nombre)
+                                } else {
+                                    nuevoAnimalesVisto.add(animal.nombre)
+                                }
+                                preferencesRepository.setAnimalVisto(nuevoAnimalesVisto)
+                            }
+                        }
+                    )
                 }
             } else {
                 // Muestra un indicador de carga mientras se obtienen los datos
@@ -72,7 +98,11 @@ fun AnimalesScreen(
 }
 
 @Composable
-fun AnimalCard(animal: Animal) {
+fun AnimalCard(
+    animal: Animal,
+    isActivado: Boolean,
+    onIconoClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +130,8 @@ fun AnimalCard(animal: Animal) {
                 Image(
                     painter = painterResource(id = animal.imagen),
                     contentDescription = "Imagen de ${animal.nombre}",
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .fillMaxHeight(0.5f)
                         .align(Alignment.BottomCenter)
                         .alpha(0.7f),
@@ -114,7 +145,8 @@ fun AnimalCard(animal: Animal) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(24.dp).offset(y = -30.dp)
+                        .padding(24.dp)
+                        .offset(y = -30.dp)
 
                 )
             }
@@ -132,7 +164,7 @@ fun AnimalCard(animal: Animal) {
                     .align(Alignment.TopCenter) // Alinea esta tarjeta en la parte superior
                     .padding(top = 32.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF6B5B3B))
+                colors = CardDefaults.cardColors(containerColor = ZooBrown)
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -154,17 +186,23 @@ fun AnimalCard(animal: Animal) {
                 }
             }
 
-            // Icono central (ahora se centrará gracias al contentAlignment del Box padre)
+            val colorDeFondoIcono = if (isActivado) {
+                ZooButtonGreen // Verde cuando está activado
+            } else {
+                ZooButtonBrown // Color original cuando está desactivado
+            }
+
             Box(
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF6B5B3B)),
+                    .background(colorDeFondoIcono) // <-- Usa el color dinámico
+                    .clickable { onIconoClick() },    // <-- Llama a la función de clic
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Icono",
+                    painter = painterResource(id = R.drawable.pataanimal),
+                    contentDescription = "IconoVisto",
                     modifier = Modifier.size(40.dp)
                 )
             }

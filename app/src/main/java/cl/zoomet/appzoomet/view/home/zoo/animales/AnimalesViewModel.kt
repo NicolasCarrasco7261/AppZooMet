@@ -8,7 +8,13 @@ import kotlinx.coroutines.flow.stateIn
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.asStateFlow
 
+
+data class AnimalVistoUiState(
+    val placeholder: Boolean = false
+)
 open class AnimalesViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(AnimalVistoUiState())
+    val uiState: StateFlow<AnimalVistoUiState> = _uiState
     private val repository = AnimalesRepository()
 
     // Exponemos la lista de animales como un StateFlow

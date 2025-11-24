@@ -15,3 +15,7 @@ val ZooBrown = Color(0xFF7B6032)
 val ZooButtonYellow = Color(0xFFE0C29A)
 
 val ZooAnimalGreen = Color(0xFFECFAE5)
+
+val ZooButtonGreen = Color(0xFFA0C878)
+
+val ZooButtonBrown = Color(0xFF6B5B3B)
