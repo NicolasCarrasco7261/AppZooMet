@@ -159,7 +159,7 @@ fun AnimalCard(
             // Tarjeta de información superior
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(0.75f)
+                    .fillMaxWidth(0.88f)
                     .align(Alignment.TopCenter) // Alinea esta tarjeta en la parte superior
                     .padding(top = 32.dp),
                 shape = RoundedCornerShape(16.dp),
