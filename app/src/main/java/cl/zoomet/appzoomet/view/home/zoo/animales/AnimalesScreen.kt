@@ -147,7 +147,6 @@ fun AnimalCard(
                         .align(Alignment.BottomCenter)
                         .padding(24.dp)
                         .offset(y = -30.dp)
-
                 )
             }
         }
